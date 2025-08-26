@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Monet - Impressionist Master</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base styles and CSS reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Crimson Text', serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #f9f7f0, #e8f4f8);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Back button */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+            background: #fff;
+        }
+
+        .back-button i {
+            font-size: 20px;
+            color: #4a6b8a;
+        }
+
+        /* Header section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.2)"/></svg>');
+            background-size: cover;
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.5s ease forwards 0.5s;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .hero h2 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #7f8c8d;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #34495e;
+        }
+
+        .hero-image {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeIn 2s ease forwards 1s;
+        }
+
+        /* Sections common styles */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, #4a6b8a, #9bb8d3);
+        }
+
+        /* About section */
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards 0.5s;
+        }
+
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            animation: fadeIn 1.5s ease forwards 1s;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Gallery section */
+        .gallery {
+            background: linear-gradient(to bottom, #e8f4f8, #d5e7f3);
+        }
+
+        .artworks {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .artwork {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: calc(var(--delay) * 0.2s);
+        }
+
+        .artwork:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .artwork img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .artwork-info {
+            padding: 1.5rem;
+        }
+
+        .artwork-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .artwork-info p {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        /* Timeline section */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background: linear-gradient(to bottom, #4a6b8a, #9bb8d3);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: fadeInRight 1s ease forwards;
+            animation-delay: calc(var(--delay) * 0.3s);
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            transform: translateX(50px);
+            animation-name: fadeInLeft;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-date {
+            font-weight: bold;
+            color: #4a6b8a;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #4a6b8a;
+            border: 4px solid white;
+            border-radius: 50%;
+            top: 20px;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(odd)::after {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            font-size: larger;
+            padding: 5rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-5px);
+            color: #9bb8d3;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from { 
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from { 
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .hero h2 {
+                font-size: 1.5rem;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+            
+            .timeline-item:nth-child(odd)::after,
+            .timeline-item:nth-child(even)::after {
+                left: 21px;
+            }
+            
+            .about-content {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .artworks {
+                grid-template-columns: 1fr;
+            }
+            
+            .back-button {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <a href="artist.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSogyFUVLdyqcgNV_dRetluPCSbsVmNrgEEZcQsoSqrlqAE3CtDzMlyM2tByjqk1MotT1X2KWKcSptYu33el9UpljCJidYwyqR4GJeJICUTt3QwFKHXCfSUW2ceeIVBJTnubpXRA5uQZ4/s1600/Claude+Monet.jpg" alt="Claude Monet" class="hero-image">
+        <div class="hero-content">
+            <h1>Claude Monet</h1>
+            <h2>Founder of French Impressionist Painting</h2>
+            <p>"Color is my day-long obsession, joy, and torment."</p>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2 class="section-title">About the Artist</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>Oscar-Claude Monet (14 November 1840 – 5 December 1926) was a French painter and founder of French Impressionist painting. The term "Impressionism" is derived from the title of his painting <em>Impression, soleil levant</em> (Impression, Sunrise), which was exhibited in 1874.</p>
+                <p>Monet's ambition of documenting the French countryside led him to adopt a method of painting the same scene many times in order to capture the changing of light and the passing of seasons.</p>
+                <p>From 1883, Monet lived in Giverny, where he purchased a house and property and began a vast landscaping project which included lily ponds that would become the subjects of his best-known works.</p>
+            </div>
+            <div class="about-image">
+                <img src="https://blog.artsper.com/wp-content/uploads/2025/02/Claude-Monet-1.jpg" alt="Claude Monet painting">
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery">
+        <h2 class="section-title">Masterpieces</h2>
+        <div class="artworks">
+            <div class="artwork" style="--delay: 1">
+                <img src="https://galeriemontblanc.com/cdn/shop/articles/Main_b2c65d40-43fa-41e4-9ff3-7c2b6685f916.jpg?v=1696105627" alt="Water Lilies">
+                <div class="artwork-info">
+                    <h3>Water Lilies</h3>
+                    <p>1916 • Oil on canvas</p>
+                </div>
+            </div>
+            <div class="artwork" style="--delay: 2">
+                <img src="https://www.monetpaintings.org/Impression%20Sunrise%20Claude%20Monet.jpg" alt="Impression, Sunrise">
+                <div class="artwork-info">
+                    <h3>Impression, Sunrise</h3>
+                    <p>1872 • Oil on canvas</p>
+                </div>
+            </div>
+            <div class="artwork" style="--delay: 3">
+                <img src="https://imgc.artprintimages.com/img/print/claude-monet-the-artist-s-garden-in-giverny-1900-oil-on-canvas_u-l-q1rqhvs0.jpg?artHeight=550&artPerspective=n&artWidth=550&background=fbfbfb" alt="The Artist's Garden at Giverny">
+                <div class="artwork-info">
+                    <h3>The Artist's Garden at Giverny</h3>
+                    <p>1900 • Oil on canvas</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline">
+        <h2 class="section-title">Life & Career</h2>
+        <div class="timeline">
+            <div class="timeline-item" style="--delay: 1">
+                <div class="timeline-date">1840</div>
+                <div class="timeline-content">
+                    <p>Born in Paris, France on November 14th.</p>
+                </div>
+            </div>
+            <div class="timeline-item" style="--delay: 2">
+                <div class="timeline-date">1851</div>
+                <div class="timeline-content">
+                    <p>Entered Le Havre secondary school of the arts.</p>
+                </div>
+            </div>
+            <div class="timeline-item" style="--delay: 3">
+                <div class="timeline-date">1857</div>
+                <div class="timeline-content">
+                    <p>Mother died, leaving him to be raised by his aunt.</p>
+                </div>
+            </div>
+            <div class="timeline-item" style="--delay: 4">
+                <div class="timeline-date">1872</div>
+                <div class="timeline-content">
+                    <p>Painted "Impression, Sunrise" which gave name to the movement.</p>
+                </div>
+            </div>
+            <div class="timeline-item" style="--delay: 5">
+                <div class="timeline-date">1883</div>
+                <div class="timeline-content">
+                    <p>Moved to Giverny, where he would create his most famous works.</p>
+                </div>
+            </div>
+            <div class="timeline-item" style="--delay: 6">
+                <div class="timeline-date">1926</div>
+                <div class="timeline-content">
+                    <p>Died of lung cancer on December 5th at the age of 86.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            
+            <p>"I must have flowers, always, and always."</p>
+            <h3>Claude Monet</h3>
+            <!-- <div class="social-links">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-pinterest"></i></a>
+            </div>
+            <p>&copy; 2023 Claude Monet Portfolio. All rights reserved.</p>
+        </div> -->
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with animations
+        document.querySelectorAll('.section-title, .about-content, .artwork, .timeline-item').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add subtle parallax effect to hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            hero.style.backgroundPositionY = (scrolled * 0.5) + 'px';
+        });
+    </script>
+</body>
+</html>
